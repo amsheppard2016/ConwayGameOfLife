@@ -2,6 +2,11 @@ import React from "react";
 
 const Cell = ({ i, j, cell, onClickCell }) => {
   const id = `${i},${j}`;
+  const cellSize ={
+    width: '16px',
+    height: '16px',
+    border: '1px solid #000'
+  }
 
   const isAlive = {
     background:`${cell.background}`
@@ -12,8 +17,8 @@ const Cell = ({ i, j, cell, onClickCell }) => {
   }
 
   const style = cell.alive
-    ? Object.assign({}, isAlive)
-    : Object.assign({}, isDead);
+    ? Object.assign({}, cellSize, isAlive)
+    : Object.assign({}, cellSize, isDead);
 
   return <td className="cell" id={id} style={style} onClick={() => onClickCell(i, j)} />;
 };
