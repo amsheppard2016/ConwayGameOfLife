@@ -16,7 +16,7 @@ const Buttons = ({ start, stop, clearGrid, changeColor}) => {
       </button>
 
       <button className="button" type="button" onClick={() => changeColor()}>
-        Change Color
+        Random Color
       </button>
     </div>
   );

@@ -12,7 +12,7 @@ const cleanGrid = (height, width) => {
   for (var i = 0; i < w; i++) {
     cleanGrid.push([]);
     for (var j = 0; j < h; j++) {
-      cleanGrid[i].push({ y: i, x: j });
+      cleanGrid[i].push({ y: i, x: j, color: "", alive: false  });
     }
   }
   console.log(cleanGrid)
@@ -27,11 +27,12 @@ const createRandomBoard = (height, width) => {
   for (var i = 0; i < w; i++) {
     randomBoard.push([]);
     for (var j = 0; j < h; j++){
-      if (Math.random() >= 0.5) {
+      // if (Math.random() >= 0.5) {
+      if (i === 0 && j === 2){
         randomBoard[i].push({
           y: i,
           x: j,
-          color:"",
+          color:this.state.background,
           alive: true
         });
       } else {
@@ -43,14 +44,14 @@ const createRandomBoard = (height, width) => {
 };
 
 
-const preset1 = (height, width, cell) => {
+const createPreset1 = (height, width, cell) => {
   const h = height;
   const w = width;
   const preset1Grid = [];
   for (var i = 0; i < w; i++) {
-    preset1.push([]);
+    preset1Grid.push([]);
     for (var j = 0; j < h; j++) {
-      preset1[i].push({ y: i, x: j });
+      preset1Grid[i].push({ y: i, x: j });
     }
   }
   cell[8][10].alive = true
@@ -60,14 +61,14 @@ const preset1 = (height, width, cell) => {
   return preset1Grid;
 };
 
-const preset2 = (height, width, cell) => {
+const createPreset2 = (height, width, cell) => {
   const h = height;
   const w = width;
   const preset2Grid = [];
   for (var i = 0; i < w; i++) {
-    preset2.push([]);
+    preset2Grid.push([]);
     for (var j = 0; j < h; j++) {
-      preset2[i].push({ y: i, x: j });
+      preset2Grid[i].push({ y: i, x: j });
     }
   }
   cell[9][11].alive = true
@@ -79,14 +80,14 @@ const preset2 = (height, width, cell) => {
   return preset2Grid;
 };
 
-const preset3 = (height, width, cell) => {
+const createPreset3 = (height, width, cell) => {
   const h = height;
   const w = width;
   const preset3Grid = [];
   for (var i = 0; i < w; i++) {
-    preset3.push([]);
+    preset3Grid.push([]);
     for (var j = 0; j < h; j++) {
-      preset3[i].push({ y: i, x: j });
+      preset3Grid[i].push({ y: i, x: j });
     }
   }
   cell[1][6].alive = true
@@ -110,16 +111,29 @@ class App extends React.Component {
       gen: 0,
       speed: 0,
       isPlaying: false,
-      background: "#05386b"
+      background: "#05386B",
     };
   }
 
   start = () => {
-    this.setState.speed = 50;
+    this.setState.isPlaying = true;
   };
 
   stop = () => {
-    this.setState.speed = 0;
+    this.setState.isPlaying = false;
+  };
+
+  clearGrid = () => {
+    this.setState({ board: cleanGrid(this.col,this.row), Gen: 0 });
+  }
+
+  changeColor =() => {
+    const randomColor = Math.floor(Math.random()*16777215).toString(16);
+    this.setState({
+      background: `${'#' + randomColor}`
+    });
+    console.log(`${'#' + randomColor}`)
+
   };
 
   randomBoard = () => {
@@ -129,11 +143,28 @@ class App extends React.Component {
     });
   };
 
-  clearGrid = () => {
-    this.setState({ board: cleanGrid(this.col,this.row), Gen: 0 });
-  }
+  preset1 = () => {
+    this.setState({
+      board: createPreset1(this.col, this.row),
+      Gen: 0
+    });
+  };
 
-  // changeColor =() => {}
+  preset2 = () => {
+    this.setState({
+      board: createPreset2(this.col, this.row),
+      Gen: 0
+    });
+  };
+
+  preset3 = () => {
+    this.setState({
+      board: createPreset3(this.col, this.row),
+      Gen: 0
+    });
+  };
+
+  
 
   onClickCell = (i, j, ) => {;
   this.setState((prevState) => {
@@ -142,20 +173,63 @@ class App extends React.Component {
       ? (newBoard[i][j] = {
           y: i,
           x: j,
-          color: this.state.color,
+          background: this.state.background,
           alive: true
         })
       : (newBoard[i][j] = { y: i, x: j, color: "", age: 0, alive: false });
+      console.log(newBoard)
     return { board: newBoard };
   });
 }
 
 
-  // countNeighbors = (cell, i, j) => {
-  // map through total board and make new board with neighbor cell counts
-  //   //count the alive cells around each cell
-  //
-  // };
+  countNeighbors = (height, width) => {
+    const h = height;
+    const w = width;
+    
+  //map through total board and make new board with neighbor cell counts
+    //count the alive cells around each cell
+    this.setState((prevState) => {
+      const neighborBoard = JSON.parse(JSON.stringify(prevState))
+      for (var i = 0; i < w; i++){
+        neighborBoard.push([])
+        for(var j = 0; j < h; j++) {
+          var neighborCount = 0
+          //go through each cell and check cell neighbors for alive or dead
+          if (neighborBoard[i-1][j-1].alive === true){
+            neighborCount += 1}
+          if (neighborBoard[i-1][j].alive === true){
+            neighborCount += 1}
+          if (neighborBoard[i-1][j+1].alive === true){
+            neighborCount += 1}
+          if (neighborBoard[i][j-1].alive === true){
+            neighborCount += 1}
+          if (neighborBoard[i][j+1].alive === true){
+            neighborCount += 1}
+          if (neighborBoard[i+1][j-1].alive === true){
+            neighborCount += 1}
+          if (neighborBoard[i+1][j].alive === true){
+            neighborCount += 1}
+          if (neighborBoard[i+1][j+1].alive === true){
+            neighborCount += 1}
+          return neighborCount
+        }
+      }
+    })
+    // this.setState((prevState) => {
+    //   const newBoard = JSON.parse(JSON.stringify(prevState.board));
+    //   newBoard[i][j].alive === false
+    //     ? (newBoard[i][j] = {
+    //         y: i,
+    //         x: j,
+    //         background: this.state.background,
+    //         alive: true
+    //       })
+    //     : (newBoard[i][j] = { y: i, x: j, color: "", age: 0, alive: false });
+    //     console.log(newBoard)
+    //   return { board: newBoard };
+    // });
+  };
   
   boardRules = (cell, i, j) => {
     //map through cells in countNeighbor board and run switch statement
@@ -179,10 +253,11 @@ class App extends React.Component {
         <h1>Conway's Game of Life </h1>
         <Buttons
         clearGrid={this.clearGrid}
+        changeColor={this.changeColor}
         />
         <h2>Generations:{this.state.gen}</h2>
         <Grid grid={this.state.board} onClickCell={this.onClickCell} />
-        <Presets randomBoard ={this.randomBoard} />
+        <Presets randomBoard ={this.randomBoard} preset1 ={this.preset1} preset2 ={this.preset2} preset3 ={this.preset4}/>
         <h2>Rules</h2>
         <p className="rules">
           1. Any live cell with fewer than two live neighbours dies, as if by

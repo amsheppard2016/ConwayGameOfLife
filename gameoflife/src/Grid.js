@@ -4,7 +4,7 @@ const Cell = ({ i, j, cell, onClickCell }) => {
   const id = `${i},${j}`;
 
   const isAlive = {
-    background:"#05386b"
+    background:`${cell.background}`
   }
   
   const isDead ={
@@ -12,8 +12,8 @@ const Cell = ({ i, j, cell, onClickCell }) => {
   }
 
   const style = cell.alive
-    ? Object.assign({}, isDead)
-    : Object.assign({}, isAlive);
+    ? Object.assign({}, isAlive)
+    : Object.assign({}, isDead);
 
   return <td className="cell" id={id} style={style} onClick={() => onClickCell(i, j)} />;
 };
